@@ -1,16 +1,10 @@
-function [training,testing] = get_emg_data(folderPath, fileNames)
+function [training,testing] = get_emg_data(filePath)
     addpath('utils/');
     %{
         Get testing and training data.
         Input:
-            folderPath: str
-                String of path to folder containing testing/training data.
-                ex: 'emglogs 2017-29-3/'
-            fileNames: cell(1,5) of str
-                Cell array of file names pertaining to flexion training
-                data, extention training data, cocontraction training data
-                ,relax training data and testing data (a mix of
-                contractions) respectively.
+            filePath: str
+                Path to a file containing unity log data of a game.
         Returns:
             training: cell(1,4) of matricies
                 Each matrix corresponds to flexion training
@@ -20,51 +14,57 @@ function [training,testing] = get_emg_data(folderPath, fileNames)
                 This matrix corresponds to the testing samples (columns
                 2:9) and their corresponding labels (column 1).
     %}
-    %% Get Raw Training Data
-    flexion_raw = dlmread([folderPath,fileNames{1}]);
-    extention_raw = dlmread([folderPath,fileNames{2}]);
-    coContraction_raw = dlmread([folderPath,fileNames{3}]);
-    relax_raw = dlmread([folderPath,fileNames{4}]);
-
-    %% Remove timestamp/labeling/etra MAV value
-    flexion = flexion_raw(:,4:end);
-    extention = extention_raw(:,4:end);
-    coContraction = coContraction_raw(:,4:end);
-    relax = relax_raw(:,4:end);
-
-    %% Store Training Data
-    training = cell(1,4);
-    training{1} = flexion;
-    training{2} = extention;
-    training{3} = coContraction;
-    training{4} = relax;
     
-    %% Get Testing Data
-    raw_test_data = dlmread([folderPath, fileNames{5}]);
-    test_data = get_test_data_labels(raw_test_data,training);
+    %% Get Data + Add Better Labels + Strip Off Useless Features
+    data = dlmread(filePath);
+    data = add_data_labels(data);
+
     
-    %% Use Half of Testing Rest Data for Training (explanation below)
+    %% Use every other sample type for training/testing data set
     new_test_data = [];
     new_relax_data = [];
+    new_flex_data = [];
+    new_ext_data = [];
+    new_cc_data = [];
     rest_count = 0;
-    for i = 1:size(test_data,1)
+    flex_count = 0;
+    ext_count = 0;
+    cc_count = 0;
+    for i = 1:size(data,1)
         %rest samples are classified as 4
-        if(test_data(i,1)==4 && mod(rest_count,2)==0)
-            new_relax_data = [new_relax_data; test_data(i,2:9)];
+        if(data(i,1)==4 && mod(rest_count,2)==0)
+            new_relax_data = [new_relax_data; data(i,2:9)];
             rest_count= rest_count+1;
-        elseif(test_data(i,1)==4)
-            new_test_data = [new_test_data; test_data(i,:)];
+        elseif(data(i,1)==4 && mod(rest_count,2)==1)
+            new_test_data = [new_test_data; data(i,:)];
             rest_count=rest_count+1;
-        else
-            new_test_data = [new_test_data; test_data(i,:)];
+        elseif(data(i,1)==1 && mod(flex_count,2)==0)
+            new_flex_data = [new_flex_data; data(i,2:9)];
+            flex_count= flex_count+1;
+        elseif(data(i,1)==1 && mod(flex_count,2)==1)
+            new_test_data = [new_test_data; data(i,:)];
+            flex_count=flex_count+1;
+        elseif(data(i,1)==2 && mod(ext_count,2)==0)
+            new_ext_data = [new_ext_data; data(i,2:9)];
+            ext_count= ext_count+1;
+        elseif(data(i,1)==2 && mod(ext_count,2)==1)
+            new_test_data = [new_test_data; data(i,:)];
+            ext_count=ext_count+1;
+        elseif(data(i,1)==3 && mod(cc_count,2)==0)
+            new_cc_data = [new_cc_data; data(i,2:9)];
+            cc_count= cc_count+1;
+        elseif(data(i,1)==3 && mod(cc_count,2)==1)
+            new_test_data = [new_test_data; data(i,:)];
+            cc_count=cc_count+1;
         end
     end
     
     training{4} = new_relax_data;
+    training{1} = new_flex_data;
+    training{2} = new_ext_data;
+    training{3} = new_cc_data;
     
     testing = cell(1,1);
     testing{1} = new_test_data;
-    %Note: rest data in training data set has a significantly different 
-    %distributionthan from rest data in testing data set
 end
 

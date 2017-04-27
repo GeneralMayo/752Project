@@ -1,6 +1,6 @@
-function labeled_data = get_test_data_labels(raw_test_data,training_data)
+function labeled_data = add_data_labels(data)
     %% Get Raw Game Data
-    chanMAVData = raw_test_data(:,4:end);
+    chanMAVData = data(:,4:end);
     
     %% Classify Game Data Using Custom Threshold As Ground Truth
     %Channels where thresholds are compared against
@@ -10,8 +10,11 @@ function labeled_data = get_test_data_labels(raw_test_data,training_data)
     %Note: Co-contraction is 20% of channel 4 and 1
     THRESHOLDS_CC = [.2,.2];
     
+    %Separate Data Based on imperfect labels
+    sep_data = get_Unity_Mav_Data(data);
+    
     %get proxy max MAVs for two channels indicated in RELEVANT_CHANNELS
-    maxMavs = get_proxy_max_MAV(training_data, RELEVANT_CHANNELS);
+    maxMavs = get_proxy_max_MAV(sep_data, RELEVANT_CHANNELS);
     
     %get relevant channels
     cA = chanMAVData(:,RELEVANT_CHANNELS(1));

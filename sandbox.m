@@ -1,3 +1,4 @@
+%{
 folderPath = 'emglogs 2017-29-3/';
 fileNames = cell(1,5);
 fileNames{1} = 'flexion unitylog 2017-29-3--12-01-51.txt';
@@ -19,3 +20,9 @@ for contractionType = 1:4
     training_labels = [training_labels; ones(size(training{contractionType},1),1)*contractionType];
 end
 displayClassifications(training_data,training_labels,'Training Data',RELEVANT_CHANNELS);
+%}
+addpath('utils/');
+[training,testing] = get_emg_data('emglogs 2017-29-3/spaceinvaders unitylog 2017-29-3--12-04-20.txt');
+testSamples = testing{1}(:,2:end);
+posterior_contractions = get_posterior_with_gmm('emglogs 2017-29-3/spaceinvaders unitylog 2017-29-3--12-04-20.txt');
+display_posterior_vs_channel(testSamples,posterior_contractions,4,[1,3]);
