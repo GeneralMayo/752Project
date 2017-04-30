@@ -4,7 +4,7 @@ clc
 
 addpath('utils/');
 [old_training,old_testing] = get_emg_data('emglogs 2017-29-3/spaceinvaders unitylog 2017-29-3--12-04-20.txt');
-GMM = 0; % 0: use original labels, 1: use GMM labels
+GMM = 1; % 0: use original labels, 1: use GMM labels
 
 if GMM == 1 % use GMM labels
     unlabeledData = remove_outliers([old_training{1}; old_training{2}; old_training{3}; old_training{4}; old_testing{1}(:,2:end)]);
@@ -75,19 +75,43 @@ for k = 1:size(testing{1},1)
     [~,labels_check(k)] = max([numerator1_check/denominator_check numerator2_check/denominator_check numerator3_check/denominator_check numerator4_check/denominator_check]);
 end
 
+names{1} = 'relax';
+names{2} = 'flexion';
+names{3} = 'extention';
+names{4} = 'co-contraction';
 figure();
-scatter(testing{1}(:,2),testing{1}(:,5),[],labels);
+hold on
+scatter(testing{1}(labels==1,2),testing{1}(labels==1,5),'r');
+scatter(testing{1}(labels==2,2),testing{1}(labels==2,5),'k');
+scatter(testing{1}(labels==3,2),testing{1}(labels==3,5),'b');
+scatter(testing{1}(labels==4,2),testing{1}(labels==4,5),'m');
 title('My MLE');
-xlabel('x1');
-ylabel('x4');
+xlabel('Channel 1');
+ylabel('Channel 4');
+legend(names);
+hold off
 figure();
-scatter(testing{1}(:,2),testing{1}(:,5),[],labels_check);
+hold on
+scatter(testing{1}(labels_check==1,2),testing{1}(labels_check==1,5),'r');
+scatter(testing{1}(labels_check==2,2),testing{1}(labels_check==2,5),'k');
+scatter(testing{1}(labels_check==3,2),testing{1}(labels_check==3,5),'b');
+scatter(testing{1}(labels_check==4,2),testing{1}(labels_check==4,5),'m');
 title('MATLAB MLE');
-xlabel('x1');
-ylabel('x4');
+xlabel('Channel 1');
+ylabel('Channel 4');
+legend(names);
+hold off
 
-figure();
-scatter(testing{1}(:,2),testing{1}(:,5),[],testing{1}(:,1));
-title('True Clustering'); % doesn't display correctly if GMM = 1 since all labels are set to 0
-xlabel('x1');
-ylabel('x4');
+if GMM == 0
+    figure();
+    hold on
+    scatter(testing{1}(testing{1}(:,1)==1,2),testing{1}(testing{1}(:,1)==1,5),'r');
+    scatter(testing{1}(testing{1}(:,1)==2,2),testing{1}(testing{1}(:,1)==2,5),'k');
+    scatter(testing{1}(testing{1}(:,1)==3,2),testing{1}(testing{1}(:,1)==3,5),'b');
+    scatter(testing{1}(testing{1}(:,1)==4,2),testing{1}(testing{1}(:,1)==4,5),'m');
+    title('True Clustering'); % doesn't display correctly if GMM = 1 since all labels are set to 0
+    xlabel('Channel 1');
+    ylabel('Channel 4');
+    legend(names);
+    hold off
+end
