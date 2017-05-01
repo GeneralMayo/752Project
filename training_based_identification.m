@@ -79,24 +79,32 @@ names{1} = 'relax';
 names{2} = 'flexion';
 names{3} = 'extention';
 names{4} = 'co-contraction';
-figure();
+figure(); % My MLE
 hold on
+scatter(testing{1}(labels==4,2),testing{1}(labels==4,5),'m');
 scatter(testing{1}(labels==1,2),testing{1}(labels==1,5),'r');
 scatter(testing{1}(labels==2,2),testing{1}(labels==2,5),'k');
 scatter(testing{1}(labels==3,2),testing{1}(labels==3,5),'b');
-scatter(testing{1}(labels==4,2),testing{1}(labels==4,5),'m');
-title('My MLE');
+if GMM == 0
+    title('Exponential Classification - Original Labels');
+else
+    title('Exponential Classification - GMM Labels');
+end
 xlabel('Channel 1');
 ylabel('Channel 4');
 legend(names);
 hold off
-figure();
+figure(); % MATLAB MLE
 hold on
+scatter(testing{1}(labels_check==4,2),testing{1}(labels_check==4,5),'m');
 scatter(testing{1}(labels_check==1,2),testing{1}(labels_check==1,5),'r');
 scatter(testing{1}(labels_check==2,2),testing{1}(labels_check==2,5),'k');
 scatter(testing{1}(labels_check==3,2),testing{1}(labels_check==3,5),'b');
-scatter(testing{1}(labels_check==4,2),testing{1}(labels_check==4,5),'m');
-title('MATLAB MLE');
+if GMM == 0
+    title('Exponential Classification - Original Labels');
+else
+    title('Exponential Classification - GMM Labels');
+end
 xlabel('Channel 1');
 ylabel('Channel 4');
 legend(names);
@@ -105,10 +113,10 @@ hold off
 if GMM == 0
     figure();
     hold on
+    scatter(testing{1}(testing{1}(:,1)==4,2),testing{1}(testing{1}(:,1)==4,5),'m');
     scatter(testing{1}(testing{1}(:,1)==1,2),testing{1}(testing{1}(:,1)==1,5),'r');
     scatter(testing{1}(testing{1}(:,1)==2,2),testing{1}(testing{1}(:,1)==2,5),'k');
     scatter(testing{1}(testing{1}(:,1)==3,2),testing{1}(testing{1}(:,1)==3,5),'b');
-    scatter(testing{1}(testing{1}(:,1)==4,2),testing{1}(testing{1}(:,1)==4,5),'m');
     title('True Clustering'); % doesn't display correctly if GMM = 1 since all labels are set to 0
     xlabel('Channel 1');
     ylabel('Channel 4');
