@@ -1,26 +1,34 @@
-function gmm = get_GMM_model(data,k,max_iter,min_change)
+function gmm = get_GMM_model(dataSeperate,k,max_iter,min_change)
 
+
+%combine data for each contraction
+data = [];
+for cIdx = 1:size(dataSeperate,2)
+    data = [data; dataSeperate{cIdx}];
+end
+data = remove_outliers(data);
 
 %% Initialize Parameters of GMM
 N = size(data,1);
 D = size(data,2);
 
 %init means
-%mu = zeros(k,D);
-%mu(1,:) = [.25,1.5];
-%mu(2,:) = [1.5,.25];
-%mu(3,:) = [.75,.75];
-%mu(4,:) = [0,0];
-
-mu = data(randperm(N,k),:);
-%init covariance to be covariance of data
-sigma = cell(k,1);
-sigma_init = cov(data);
+mu = zeros(k,D);
 for i = 1:k
-    sigma{i,1} = sigma_init;
+    mu(i,:) = mean(dataSeperate{i});
 end
-%init prior to be uniform categorical distribution
-priors = ones(1,k)*1/k;
+
+%init covariance
+sigma = cell(k,1);
+for i = 1:k
+    sigma{i,1} = cov(dataSeperate{i});
+end
+
+%init prior
+priors = zeros(1,k);
+for i = 1:k
+    priors(i) = size(dataSeperate{i},1)/N;
+end
 
 %% Expectation Maximization
 P_clusterGdata = zeros(N,k);
@@ -42,6 +50,8 @@ for iter = 1:max_iter
     old_sigma = sigma;
     old_mu = mu;
     old_priors = priors;
+    %figure;
+    %plot(mu(1,1),mu(1,2),mu(2,1),mu(2,2),mu(3,1),mu(3,2),mu(4,1),mu(4,2))
     for cluster_idx = 1:k
         %commonly used var
         sum_posterior = sum(P_clusterGdata(:,cluster_idx));
@@ -66,7 +76,6 @@ for iter = 1:max_iter
         break;
     end
 end
-disp(priors)
 gmm = cell(1,3);
 gmm{1,1} = priors;
 gmm{1,2} = mu;

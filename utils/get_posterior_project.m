@@ -1,4 +1,4 @@
-function labels = manual_cluster(gmm,data)
+function P_clusterGdata = get_posterior_project(gmm,data)
     N = size(data,1);
     priors = gmm{1,1};
     mu = gmm{1,2};
@@ -18,6 +18,4 @@ function labels = manual_cluster(gmm,data)
         %P(k | Data_i, mu_k, sigma_k)
         P_clusterGdata(i,:) = P_clusterGdata(i,:)./sum(P_clusterGdata(i,:));
     end
-    
-    [v,labels] = max(P_clusterGdata,[],2);
 end

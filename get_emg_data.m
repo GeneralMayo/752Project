@@ -16,7 +16,8 @@ function [training,testing] = get_emg_data(filePath)
     %}
     
     %% Get Data + Add Better Labels + Strip Off Useless Features
-    data = dlmread(filePath);
+    data=load(filePath);
+    %data = dlmread(filePath);
     data = add_data_labels(data);
 
     

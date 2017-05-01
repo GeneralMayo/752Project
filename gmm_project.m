@@ -3,25 +3,35 @@ clc;
 
 addpath('utils/');
 
+fileName = 'emglogs 2017-29-3/spaceinvaders unitylog 2017-29-3--12-04-20.txt';
+%fileName = 'SpaceInvaders_unitylog_2017419T143810.txt';
+
 RELEVANT_CHANNELS = [1,4];
 
-[training, testing] = get_emg_data('emglogs 2017-29-3/spaceinvaders unitylog 2017-29-3--12-04-20.txt');
+[training, testing] = get_emg_data(fileName);
+displayClassifications(testing{1}(:,2:end),testing{1}(:,1),'Manual Labels',RELEVANT_CHANNELS)
 
-thresholdClassifications = testing{1}(:,1);
-
-%combine data for each contraction
-trainingCombined = [];
-for cIdx = 1:size(training,2)
-    trainingCombined = [trainingCombined; training{cIdx}];
+%feature reduction
+trainingNewD = cell(1,size(training,2));
+for i = 1:length(training)
+    trainingNewD{i} = training{i}(:,RELEVANT_CHANNELS);
 end
-trainingCombined = remove_outliers(trainingCombined);
-
 %fit gmm (4 distributions)
 K = 4;
 
-gmm = get_GMM_model(trainingCombined(:,RELEVANT_CHANNELS),K,1000,.01);
-labels = manual_cluster(gmm,trainingCombined(:,RELEVANT_CHANNELS));
-displayClassifications(trainingCombined,labels,'GMM Classification',RELEVANT_CHANNELS)
+data = [];
+for cIdx = 1:size(training,2)
+    data = [data; training{cIdx}];
+end
+
+gmm = get_GMM_model(trainingNewD,K,1000,.01);
+
+testSamples = testing{1}(:,2:end);
+P_clusterGdata = get_posterior_project(gmm,testSamples(:,RELEVANT_CHANNELS));%testing{1}(:,RELEVANT_CHANNELS));
+[v,labels] = max(P_clusterGdata,[],2);
+displayClassifications(testSamples,labels,'GMM Classification',RELEVANT_CHANNELS)
+
+display_posterior_vs_channel(testSamples,P_clusterGdata,4,[1,3]);
 
 
 

@@ -1,14 +1,9 @@
 addpath('utils/');
 RELEVANT_CHANNELS = [1,4];
 
-folderPath = 'emglogs 2017-29-3/';
-fileNames = cell(1,5);
-fileNames{1} = 'flexion unitylog 2017-29-3--12-01-51.txt';
-fileNames{2} = 'extension unitylog 2017-29-3--12-02-21.txt';
-fileNames{3} = 'cocontract unitylog 2017-29-3--12-00-54.txt';
-fileNames{4} = 'rest unitylog 2017-29-3--12-00-18.txt';
-fileNames{5} = 'spaceinvaders unitylog 2017-29-3--12-04-20.txt';
-[training,testing] = get_emg_data(folderPath, fileNames);
+%fileName = 'emglogs 2017-29-3/spaceinvaders unitylog 2017-29-3--12-04-20.txt';
+fileName = 'MyoBird_unitylog_2017420T154435.txt';
+[training,testing] = get_emg_data(fileName);
 
 thresholdClassifications = testing{1}(:,1);
 
@@ -21,10 +16,24 @@ end
 %fit gmm (4 distributions)
 K = 4;
 
-%% look for new clusters if so long as data isn't being separated 
+%% look for new clusters if so long as data isn't being separated
+
+Mu = [0 1; 1 0; .75 .75; .25 .25];
+sigma = cov(trainingCombined(:,RELEVANT_CHANNELS));
+Sigma(:,:,1) = sigma;
+Sigma(:,:,2) = sigma;
+Sigma(:,:,3) = sigma;
+Sigma(:,:,4) = sigma;
+PComponents = ones(1,4)*1/4;
+S = struct('mu',Mu,'Sigma',Sigma,'ComponentProportion',PComponents);
+gm = fitgmdist(trainingCombined(:,RELEVANT_CHANNELS),K,'Start',S);
+labels = cluster(gm,trainingCombined(:,RELEVANT_CHANNELS));
+
+keyboard;
 clustersNotUnique = true;
 while(clustersNotUnique)
-    gm = fitgmdist(trainingCombined(:,RELEVANT_CHANNELS),K);
+    
+    gm = fitgmdist(trainingCombined(:,RELEVANT_CHANNELS),K,'Start',S);
     
     %get frequency of particular contractions being assigned to
     %particular clusters

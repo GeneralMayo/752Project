@@ -22,7 +22,7 @@ end
 displayClassifications(training_data,training_labels,'Training Data',RELEVANT_CHANNELS);
 %}
 addpath('utils/');
-[training,testing] = get_emg_data('emglogs 2017-29-3/spaceinvaders unitylog 2017-29-3--12-04-20.txt');
+[training,testing] = get_emg_data('MyoBird_unitylog_2017420T154435.txt');
 testSamples = testing{1}(:,2:end);
-posterior_contractions = get_posterior_with_gmm('emglogs 2017-29-3/spaceinvaders unitylog 2017-29-3--12-04-20.txt');
+posterior_contractions = get_posterior_with_gmm('MyoBird_unitylog_2017420T154435.txt');
 display_posterior_vs_channel(testSamples,posterior_contractions,4,[1,3]);
