@@ -1,0 +1,138 @@
+
+%
+%  $Description: Author guidelines and sample document in LaTeX 2.09$ 
+%
+%  $Author: ienne $
+%  $Date: 1995/09/15 15:20:59 $
+%  $Revision: 1.4 $
+%
+
+\documentclass[times, 10pt,twocolumn]{article} 
+\usepackage{paper}
+\usepackage{times}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+
+%\documentstyle[times,art10,twocolumn,latex8]{article}
+
+%------------------------------------------------------------------------- 
+% take the % away on next line to produce the final camera-ready version 
+\pagestyle{empty}
+
+%------------------------------------------------------------------------- 
+\begin{document}
+
+\title{18-752 Final Project Report: EMG Signal Classification}
+
+\author{Paul Griffioen\\Dept. of Electrical and Computer Engineering\\Carnegie Mellon University\\ pgriffi1@andrew.cmu.edu\\
+% For a paper whose authors are all at the same institution, 
+% omit the following lines up until the closing ``}''.
+% Additional authors and addresses can be added with ``\and'', 
+% just like the second author.
+\and
+Thomas Mayo-Smith\\Dept. of Electrical and Computer Engineering\\Carnegie Mellon University\\tmayosmi@andrew.cmu.edu\\
+}
+
+\maketitle
+\thispagestyle{empty}
+
+%------------------------------------------------------------------------- 
+\begin{abstract}
+Abstract.
+\end{abstract}
+
+%------------------------------------------------------------------------- 
+\section{Introduction and Motivation}
+
+Introduction and motivation.
+
+%------------------------------------------------------------------------- 
+\section{Data Set Collection}
+
+Data set collection.
+
+%------------------------------------------------------------------------- 
+\section{Blind Identification and Detection}
+
+Blind identification and detection.
+
+\begin{equation}
+x = \text{EMG sample}
+\end{equation}
+\begin{equation}
+\lambda_i = \text{contraction }i, i\in[1,2,3,4]
+\end{equation}
+\begin{equation}
+f_{\theta_i}(x|\lambda_i) = \theta_i\mathrm{e}^{-\theta_ix}
+\end{equation}
+\begin{equation}
+f_{\theta_i}(\lambda_i) = (\text{\# data points for }\lambda_i)/(\text{total \# of labeled data points})
+\end{equation}
+\begin{equation}
+L(\theta_i,\lambda_i,X) = \log{f_{\theta_i}(X|\lambda_i)} = \log{\prod_{k=1}^{n}f_{\theta_i}(x_k|\lambda_i)} = \sum_{k=1}^{n}\log{f_{\theta_i}(x_k|\lambda_i)}
+\end{equation}
+\begin{equation}
+\frac{\partial}{\partial{\theta_i}}L(\theta_i,\lambda_i,X) = 0 \text{ } => \text{ } \hat{\theta}_i = \frac{n}{\sum_{k=1}^{n}x_k}
+\end{equation}
+\begin{equation}
+f_{\theta_i}(\lambda_i|x) = \frac{f_{\theta_i}(\lambda_i)\prod_{\text{channel}}f_{\theta_i}(x|\lambda_i)}{\sum_{i=1}^{4}f_{\theta_i}(\lambda_i)\prod_{\text{channel}}f_{\theta_i}(x|\lambda_i)}
+\end{equation}
+\begin{equation}
+\hat{\lambda} = \max_{i}f_{\theta_i}(\lambda_i|x)
+\end{equation}
+
+%------------------------------------------------------------------------- 
+\section{Supervised Identification and Detection}
+
+Supervised Identification and Detection.
+
+\begin{equation}
+x = \text{EMG sample}
+\end{equation}
+\begin{equation}
+\lambda_i = \text{contraction }i, i\in[1,2,3,4]
+\end{equation}
+\begin{equation}
+f_{\mu_i,\sigma_i^2}(x|\lambda_i) = \mathcal{N}(\mu_i,\sigma_i^2)
+\end{equation}
+\begin{equation}
+f_{\mu_i,\sigma_i^2}(\lambda_i) = \text{categorical density with parameters } p_i
+\end{equation}
+\begin{equation}
+f(x) = \sum_{i=1}^{4}f_{\mu_i,\sigma_i^2}(\lambda_i)f_{\mu_i,\sigma_i^2}(x|\lambda_i)
+\end{equation}
+\begin{equation}
+L(\mu,\sigma^2,\lambda,X) = \log{f_{\mu,\sigma^2}(X)} = \sum_{k=1}^{n}\log{\sum_{i=1}^{4}f_{\mu_i,\sigma_i^2}(x_k|\lambda_i)f_{\mu_i,\sigma_i^2}(\lambda_i)}
+\end{equation}
+\begin{equation}
+\frac{\partial}{\partial{\mu}}L(\mu,\sigma^2,\lambda,X) = 0 \text{ } => \text{ } \hat{\mu}
+\end{equation}
+\begin{equation}
+\frac{\partial}{\partial{\sigma^2}}L(\mu,\sigma^2,\lambda,X) = 0 \text{ } => \text{ } \hat{\sigma}^2
+\end{equation}
+\begin{equation}
+\text{calculate } f_{\hat{\mu}_i,\hat{\sigma}_i^2}(\lambda_i|x_k)
+\end{equation}
+\begin{equation}
+f_{\mu_i,\sigma_i^2}(\lambda_i|x) = \frac{1}{n}\sum_{k=1}^{n}f_{\hat{\mu}_i,\hat{\sigma}_i^2}(\lambda_i|x_k)
+\mu_i = \frac{\sum_{k=1}^{n}f_{\hat{\mu}_i,\hat{\sigma}_i^2}(\lambda_i|x_k)x_k}{\sum_{k=1}^{n}f_{\hat{\mu}_i,\hat{\sigma}_i^2}(\lambda_i|x_k)}
+\end{equation}
+\begin{equation}
+\sigma_i^2 = \frac{\sum_{k=1}^{n}f_{\hat{\mu}_i,\hat{\sigma}_i^2}(\lambda_i|x_k)(x_k-\mu_i)(x_k-\mu_i)^T}{\sum_{k=1}^{n}f_{\hat{\mu}_i,\hat{\sigma}_i^2}(\lambda_i|x_k)}
+\end{equation}
+
+%------------------------------------------------------------------------- 
+\nocite{ex1,ex2}
+\bibliographystyle{paper}
+\bibliography{paper}
+
+%\begin{thebibliography}{}
+\begin{thebibliography}{}\setlength{\itemsep}{-1ex}\small
+
+\bibitem{incentives}
+Author. "Title." \textit{Journal}, pp. \#-\#, Year.
+
+\end{thebibliography}
+
+\end{document}
