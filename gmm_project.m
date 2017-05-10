@@ -6,7 +6,7 @@ addpath('utils/');
 fileName = 'emglogs 2017-29-3/spaceinvaders unitylog 2017-29-3--12-04-20.txt';
 %fileName = 'SpaceInvaders_unitylog_2017419T143810.txt';
 
-RELEVANT_CHANNELS = [1,4];
+RELEVANT_CHANNELS = [1,2,3,4,5,6,7,8];
 
 [training, testing] = get_emg_data(fileName);
 displayClassifications(testing{1}(:,2:end),testing{1}(:,1),'Manual Labels',RELEVANT_CHANNELS)
@@ -28,10 +28,16 @@ gmm = get_GMM_model(trainingNewD,K,1000,.01);
 
 testSamples = testing{1}(:,2:end);
 P_clusterGdata = get_posterior_project(gmm,testSamples(:,RELEVANT_CHANNELS));%testing{1}(:,RELEVANT_CHANNELS));
+
+disp(cov(P_clusterGdata))
+keyboard;
+
 [v,labels] = max(P_clusterGdata,[],2);
 displayClassifications(testSamples,labels,'GMM Classification',RELEVANT_CHANNELS)
 
 display_posterior_vs_channel(testSamples,P_clusterGdata,4,[1,3]);
+
+
 
 
 
