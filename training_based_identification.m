@@ -3,7 +3,10 @@ clear
 clc
 
 addpath('utils/');
-[old_training,old_testing] = get_emg_data('emglogs 2017-29-3/spaceinvaders unitylog 2017-29-3--12-04-20.txt');
+fileName = 'data/spaceInvaders1.txt';
+%fileName = 'data/spaceInvaders2.txt';
+
+[old_training,old_testing] = get_emg_data(fileName);
 GMM = 1; % 0: use CAPS labels, 1: use GMM labels
 channels14 = 1; % 1: use only channels 1 & 4; 0: use all channels
 

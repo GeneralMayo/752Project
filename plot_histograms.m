@@ -3,8 +3,8 @@ clc;
 
 addpath('utils/');
 
-fileName = 'emglogs 2017-29-3/spaceinvaders unitylog 2017-29-3--12-04-20.txt';
-%fileName = 'SpaceInvaders_unitylog_2017419T143810.txt';
+fileName = 'data/spaceInvaders1.txt';
+%fileName = 'data/spaceInvaders2.txt';
 
 
 RELEVANT_CHANNELS = [1,2,3,4,5,6,7,8];
